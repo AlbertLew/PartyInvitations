@@ -15,21 +15,38 @@
     <main role="main" class="container">
       <h1>Invitations</h1>
       <!-- Snacks Requested Counter-->
+      Snacks Requested: <span id="snack-request">0</span>
       <!-- Desserts Requested Counter-->
+      Desserts Requested: <span id="dessert-request">0</span>
+      <!-- Spacing -->
+      <hr>
       <!-- Name Entry Box -->
       <div class="form-group">
-        <label for="">  Who is the invitation for? </label>
+        <label for="invite-name">  Who is the invitation for? </label>
         <input type="text" class="form-control"
-               id="" aria-describedby=""
+               id="invite-name" aria-describedby="invite-name-help"
                placeholder="Name">
-        <small id="" class="form-text text-muted" >
+        <small id="invite-name-help" class="form-text text-muted" >
           Enter the name of the invitee.
         </small>
       </div>
-      <p>Who is the invitation for?</p>
       <!-- Snack Request Button -->
+      <p>
+        <button
+                onclick="RequestSnack.snackRequested()"
+                type="button" class="btn btn-primary">Request Snack</button>
       <!-- Desert Request Button -->
+        <button
+                onclick="RequestDessert.dessertRequested()"
+                type="button" class="btn btn-primary">Request Dessert</button>
+      </p>
       <!-- Invite Button, Disabled until a name is filled in -->
+      <p>
+      <button
+              onclick="SubmitInvite.inviteSubmit()"
+              type="button" class="btn btn-primary">Invite</button>
+      </p>
+      <!-- Value of Box -->
     </main><!-- /.container -->
     <div id="footer"></div>
     <!-- jQuery first, then Popper, then Bootstrap. -->
@@ -38,9 +55,30 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <script>
     "use strict";
+    var RequestSnack = RequestSnack || {};
+    var RequestDessert = RequestDessert ||{};
+    var SubmitInvite = SubmitInvite ||{};
     var AppNamespace = AppNamespace || {};
     (function($) {
         $(document).ready(function () {
+          var snacks = 0;
+          var desserts = 0;
+          var auditTrail = "";
+          RequestSnack.snackRequested = function () {
+            snacks++;
+            $("#snack-request").html(snacks);
+          };
+          RequestDessert.dessertRequested = function () {
+            desserts++;
+            $("#dessert-request").html(desserts);
+          };
+          SubmitInvite.inviteSubmit = function () {
+            var inviteName = $("#invite-name").val();
+            if (typeof inviteName != "string") {
+              alert("Sorry, invitee name must not contain numbers");
+              return;
+            }
+          }
             //Load the navbar from the library.
             $("#navbar").load("library/includes/navbar.html");
             //Load the footer from the library.

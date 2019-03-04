@@ -64,6 +64,16 @@
           var snacks = 0;
           var desserts = 0;
           var auditTrail = "";
+          var inviteName = $("#invite-name").val();
+          var choice =
+          SubmitInvite.addName = function() {
+              SubmitInvite.logName(inviteName + ": Please come to our party! Please bring a" + choice + "to share. &nbsp " +
+                  "Your homies Alannah and Albert")
+          };
+          SubmitInvite.logName = function(message) {
+              auditTrail += message + "<br>";
+              $("audit-trail").html(auditTrail);
+          };
           RequestSnack.snackRequested = function () {
             snacks++;
             $("#snack-request").html(snacks);
@@ -73,12 +83,11 @@
             $("#dessert-request").html(desserts);
           };
           SubmitInvite.inviteSubmit = function () {
-            var inviteName = $("#invite-name").val();
             if (typeof inviteName != "string") {
               alert("Sorry, invitee name must not contain numbers");
               return;
             }
-          }
+          };
             //Load the navbar from the library.
             $("#navbar").load("library/includes/navbar.html");
             //Load the footer from the library.

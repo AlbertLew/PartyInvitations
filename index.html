@@ -15,9 +15,9 @@
     <main role="main" class="container">
       <h1>Invitations</h1>
       <!-- Snacks Requested Counter-->
-      Snacks Requested: <span id="snack-request">0</span>
+      Snacks Requested: <span id="snack-request"></span>
       <!-- Desserts Requested Counter-->
-      Desserts Requested: <span id="dessert-request">0</span>
+      Desserts Requested: <span id="dessert-request"></span>
       <!-- Spacing -->
       <hr>
       <!-- Name Entry Box -->
@@ -25,7 +25,7 @@
         <label for="invite-name">  Who is the invitation for? </label>
         <input type="text" class="form-control"
                id="invite-name" aria-describedby="invite-name-help"
-               placeholder="Name">
+               placeholder="Name" value="">
         <small id="invite-name-help" class="form-text text-muted" >
           Enter the name of the invitee.
         </small>
@@ -44,10 +44,15 @@
       </p>
       <!-- Invite Button, Disabled until a name is filled in -->
       <p>
-      <button
+        <button
               id = "invite-button"
               onclick="SubmitInvite.addName()"
               type="button" class="btn btn-primary">Invite</button>
+        <!-- Audit Reset Button -->
+        <button
+                id = "audit-reset"
+                onclick="AuditTrail.clear()"
+                type="button" class="btn btn-primary">Clear Invites</button>
       </p>
       <!-- Audit Trail -->
       <p>
@@ -64,15 +69,29 @@
     var RequestSnack = RequestSnack || {};
     var RequestDessert = RequestDessert ||{};
     var SubmitInvite = SubmitInvite ||{};
+    var AuditTrail = AuditTrail ||{};
     var AppNamespace = AppNamespace || {};
     (function($) {
         $(document).ready(function () {
-          var snacks = 0;
-          var desserts = 0;
           var auditTrail = "";
+          var snacks = "0";
+          var desserts = "0";
           var inviteName = "";
           var choice = "";
+          if (localStorage.getItem("auditTrail")) {
+            auditTrail = localStorage.getItem("auditTrail")
+          }
+          if (localStorage.getItem("snacks")) {
+            snacks = localStorage.getItem("snacks")
+          }
+          if (localStorage.getItem("desserts")) {
+            desserts = localStorage.getItem("desserts")
+          }
+          $("#audit-trail").html(auditTrail);
+          $("#snack-request").html(snacks);
+          $("#dessert-request").html(desserts);
           $("#invite-button").attr('disabled','disabled');
+
           SubmitInvite.addName = function() {
               inviteName = $("#invite-name").val();
             $("#snack-button").removeAttr('disabled');
@@ -80,14 +99,21 @@
             $("#invite-button").attr('disabled','disabled');
               SubmitInvite.logName(inviteName + ":" + "<br><br>" + "Please come to our party! Please bring a " + choice + " to share.<br><br>" +
                   "Your Homies, Alannah and Albert<hr>");
-            $("invite-name").value = "";
           };
           SubmitInvite.logName = function(message) {
-              auditTrail += message;
-              $("#audit-trail").html(auditTrail);
+            auditTrail += message;
+            $("#audit-trail").html(auditTrail);
+            localStorage.setItem("auditTrail", auditTrail);
+            $("#invite-name").val("");
           };
           RequestSnack.snackRequested = function () {
+            inviteName = $("#invite-name").val();
+            if ( inviteName === "" ) {
+              alert("Sorry, must enter a name to send an invite!");
+              return;
+            }
             snacks++;
+            localStorage.setItem("snacks", snacks);
             choice = "snack";
             $("#snack-button").attr('disabled','disabled');
             $("#desert-button").attr('disabled','disabled');
@@ -95,11 +121,28 @@
             $("#snack-request").html(snacks);
           };
           RequestDessert.dessertRequested = function () {
+            inviteName = $("#invite-name").val();
+            if ( inviteName === "" ) {
+              alert("Sorry, must enter a name to send an invite!");
+              return;
+            }
             desserts++;
+            localStorage.setItem("desserts", desserts);
             choice = "dessert";
             $("#snack-button").attr('disabled','disabled');
             $("#desert-button").attr('disabled','disabled');
             $("#invite-button").removeAttr('disabled');
+            $("#dessert-request").html(desserts);
+          };
+          AuditTrail.clear = function () {
+            auditTrail = "";
+            desserts = "0";
+            snacks = "0";
+            localStorage.setItem("auditTrail", "");
+            localStorage.setItem("desserts", "0");
+            localStorage.setItem("snacks", "0");
+            $("#audit-trail").html(auditTrail);
+            $("#snack-request").html(snacks);
             $("#dessert-request").html(desserts);
           };
             //Load the navbar from the library.
